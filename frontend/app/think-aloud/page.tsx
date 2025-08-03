@@ -31,6 +31,7 @@ function ThinkAloudPage() {
         originalText: string;
         modifiedText: string;
         pastUtterances: string;
+        historySummary: string;
     }[]>([]);
     const [historySummary, setHistorySummary] = useState('');
     const [originalText, setOriginalText] = useState('');
@@ -103,6 +104,7 @@ function ThinkAloudPage() {
                     originalText: previousText,
                     modifiedText: result.modifiedText,
                     pastUtterances: pastUtterances,
+                    historySummary: historySummary,
                 };
                 
                 const updatedHistory = [...modificationHistory, newHistoryItem];
@@ -611,7 +613,7 @@ function ThinkAloudPage() {
                     past_utterances: item.pastUtterances,
                     edit_plan: item.editPlan,
                     modified_text: item.modifiedText,
-                    history_summary: historySummary
+                    history_summary: item.historySummary
                 })),
                 isPracticeMode: isPractice,
             };
