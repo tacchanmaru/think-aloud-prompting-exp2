@@ -32,7 +32,6 @@ function createGPTPrompt(
     history: TextModificationHistory[],
     imageBase64?: string
 ): any[] {
-    const historyContext = historySummary ? `\n\nこれまでの編集傾向:\n${historySummary}` : '';
     
     // Format recent history (last 3 items)
     let historyText = '';
@@ -90,7 +89,7 @@ function createGPTPrompt(
                 { type: 'text', text: `元の商品説明文: ${text}` },
                 { type: 'text', text: `ユーザーの現在の発話: ${utterance}` },
                 ...(pastUtterances ? [{ type: 'text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
-                { type: 'text', text: `参考情報: ${historyContext}` },
+                ...(historySummary ? [{ type: 'text', text: `これまでの編集傾向:\n${historySummary}` }] : []),
                 ...(historyText ? [{ type: 'text', text: historyText }] : []),
                 ...(imageBase64 ? [{
                     type: 'image_url',
