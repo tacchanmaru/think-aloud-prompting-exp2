@@ -45,6 +45,7 @@ function ThinkAloudPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const lastCompleteTimeRef = useRef<number>(Date.now());
     const [isDescriptionClicked, setIsDescriptionClicked] = useState(false);
+    const [pastUtterances, setPastUtterances] = useState<string>('');  // 過去の発話を「、」で区切って保存
     
     const websocketRef = useRef<WebSocket | null>(null);
     const audioContextRef = useRef<AudioContext | null>(null);
@@ -70,6 +71,7 @@ function ThinkAloudPage() {
                 body: JSON.stringify({
                     text: textContent,
                     utterance: utterance,
+                    pastUtterances: pastUtterances,
                     imageBase64: imagePreview ? imagePreview.split(',')[1] : undefined,
                     history: modificationHistory,
                     historySummary: historySummary
@@ -116,7 +118,7 @@ function ThinkAloudPage() {
             console.error('Error in text modification:', error);
             throw error; // Re-throw to be handled by caller
         }
-    }, [textContent, imagePreview, modificationHistory, historySummary]);
+    }, [textContent, imagePreview, modificationHistory, historySummary, pastUtterances]);
 
     const updateHistorySummary = useCallback(async (history: typeof modificationHistory) => {
         // history summaryの更新は編集履歴が2つ以上の場合のみ実行
@@ -191,6 +193,15 @@ function ThinkAloudPage() {
             console.log('Processing buffered utterances:', utterancesToProcess);
             
             await processTextModification(combinedUtterance);
+            
+            // Add current utterance to past utterances
+            setPastUtterances(prev => {
+                if (prev) {
+                    return prev + '、' + combinedUtterance;
+                } else {
+                    return combinedUtterance;
+                }
+            });
             
             // Clear only the transcript items that were processed
             setTranscriptItems(prev => prev.filter(item => 

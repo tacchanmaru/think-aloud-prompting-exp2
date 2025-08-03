@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 interface TextModificationRequest {
     text: string;
     utterance: string;
+    pastUtterances?: string;  // 過去の発話（「、」で区切られた文字列）
     imageBase64?: string;
     history?: TextModificationHistory[];
     historySummary?: string;
@@ -26,6 +27,7 @@ interface GPTResponse {
 function createGPTPrompt(
     text: string, 
     utterance: string, 
+    pastUtterances: string,
     historySummary: string,
     history: TextModificationHistory[],
     imageBase64?: string
@@ -74,6 +76,7 @@ function createGPTPrompt(
 }
 
 ## 注意点
+- 過去の発話と現在の発話が続いている場合があるので、文脈を考慮して解釈してください。
 - JSON形式のみを返してください。説明や理由は含めないでください
 - 個人が出品する一点物の商品の説明文章なので、他の商品が存在することを前提とした表現や説明になることはありません
 - 文章として読みやすいようにスタイルには特に気をつけてください
@@ -85,7 +88,8 @@ function createGPTPrompt(
             role: 'user',
             content: [
                 { type: 'text', text: `元の商品説明文: ${text}` },
-                { type: 'text', text: `ユーザーの発話: ${utterance}` },
+                { type: 'text', text: `ユーザーの現在の発話: ${utterance}` },
+                ...(pastUtterances ? [{ type: 'text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
                 { type: 'text', text: `制約条件: ${historyContext}` },
                 ...(historyText ? [{ type: 'text', text: historyText }] : []),
                 ...(imageBase64 ? [{
@@ -103,7 +107,7 @@ function createGPTPrompt(
 export async function POST(request: NextRequest) {
     try {
         const body: TextModificationRequest = await request.json();
-        const { text, utterance, imageBase64, history = [], historySummary = '' } = body;
+        const { text, utterance, pastUtterances = '', imageBase64, history = [], historySummary = '' } = body;
 
         if (!text || !utterance) {
             return NextResponse.json(
@@ -113,7 +117,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Create GPT prompt
-        const messages = createGPTPrompt(text, utterance, historySummary, history, imageBase64);
+        const messages = createGPTPrompt(text, utterance, pastUtterances, historySummary, history, imageBase64);
 
         // Call OpenAI API
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
