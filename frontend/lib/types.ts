@@ -19,6 +19,7 @@ export interface ManualExperimentResult extends BaseExperimentData {
 // Think-Aloud実験の中間ステップ
 export interface IntermediateStep {
     utterance: string;           // ユーザーの発話内容
+    past_utterances: string;     // ユーザーの過去の発話
     edit_plan: string;           // AIによる修正提案・計画
     modified_text: string;       // AIによって修正されたテキスト
     history_summary?: string;    // その時点での制約や履歴の要約

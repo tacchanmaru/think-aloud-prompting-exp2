@@ -6,7 +6,7 @@ import ProductImageUploadPhase from '../components/ProductImageUploadPhase';
 import { useTimer } from '../contexts/TimerContext';
 import { useAuth } from '../contexts/AuthContext';
 import { saveExperimentData } from '../../lib/experimentService';
-import { ThinkAloudExperimentResult, IntermediateStep } from '../../lib/types';
+import { ThinkAloudExperimentResult } from '../../lib/types';
 import { ExperimentPageType } from '../../lib/experimentUtils';
 
 
@@ -30,6 +30,7 @@ function ThinkAloudPage() {
         editPlan: string;
         originalText: string;
         modifiedText: string;
+        pastUtterances: string;
     }[]>([]);
     const [historySummary, setHistorySummary] = useState('');
     const [originalText, setOriginalText] = useState('');
@@ -101,6 +102,7 @@ function ThinkAloudPage() {
                     editPlan: result.plan || '',
                     originalText: previousText,
                     modifiedText: result.modifiedText,
+                    pastUtterances: pastUtterances,
                 };
                 
                 const updatedHistory = [...modificationHistory, newHistoryItem];
@@ -339,14 +341,6 @@ function ThinkAloudPage() {
             console.error('Microphone permission denied:', error);
             setError('マイクの許可が必要です。ブラウザの設定を確認してください。');
             throw error;
-        }
-    };
-
-    const handleRecordClick = () => {
-        if (isRecording) {
-            stopRecording();
-        } else {
-            startRecording();
         }
     };
 
@@ -614,6 +608,7 @@ function ThinkAloudPage() {
                 durationSeconds: getDurationSeconds(),
                 intermediateSteps: modificationHistory.map(item => ({
                     utterance: item.utterance,
+                    past_utterances: item.pastUtterances,
                     edit_plan: item.editPlan,
                     modified_text: item.modifiedText,
                     history_summary: historySummary
