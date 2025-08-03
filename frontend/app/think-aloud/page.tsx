@@ -144,7 +144,8 @@ function ThinkAloudPage() {
                         editPlan: item.editPlan,
                         originalText: item.originalText,
                         modifiedText: item.modifiedText,
-                    }))
+                    })),
+                    currentSummary: historySummary
                 }),
             });
 

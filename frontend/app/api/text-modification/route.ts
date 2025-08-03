@@ -32,7 +32,7 @@ function createGPTPrompt(
     history: TextModificationHistory[],
     imageBase64?: string
 ): any[] {
-    const historyContext = historySummary ? `\n\n現在の編集における制約条件:\n${historySummary}` : '';
+    const historyContext = historySummary ? `\n\nこれまでの編集傾向:\n${historySummary}` : '';
     
     // Format recent history (last 3 items)
     let historyText = '';
@@ -59,8 +59,8 @@ function createGPTPrompt(
 
 ## ステップ2: 修正文章の生成（修正が必要な場合のみ）
 修正が必要と判断した場合は、以下の方針で修正後の文章全体を生成してください：
+- これまでの編集傾向は、現在の発話と矛盾しない範囲で考慮する
 - ユーザーから特段指示がない限りは、文章のスタイル（箇条書き、文体など）は基本的に維持する
-- 制約条件が提示されている場合は、それらを考慮してバランスの取れた修正を提案する
 - 「元に戻して」系の発話の場合は、履歴から適切な過去の状態や特徴を特定して復元する
 - フリマアプリの商品説明として適切な表現を心がける
 - 画像の内容と説明文の整合性を確認する
@@ -90,7 +90,7 @@ function createGPTPrompt(
                 { type: 'text', text: `元の商品説明文: ${text}` },
                 { type: 'text', text: `ユーザーの現在の発話: ${utterance}` },
                 ...(pastUtterances ? [{ type: 'text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
-                { type: 'text', text: `制約条件: ${historyContext}` },
+                { type: 'text', text: `参考情報: ${historyContext}` },
                 ...(historyText ? [{ type: 'text', text: historyText }] : []),
                 ...(imageBase64 ? [{
                     type: 'image_url',
