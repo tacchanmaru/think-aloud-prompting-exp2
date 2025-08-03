@@ -16,21 +16,15 @@ interface TextModificationHistory {
     modifiedText: string;
 }
 
-interface JsonModificationCommand {
-    line: number;
-    command: 'add' | 'delete' | 'modify';
-    text: string;
-}
-
 interface GPTResponse {
     should_edit: 'yes' | 'no';
     plan: string;
-    content: JsonModificationCommand[];
+    content: string;  // 修正後の文章全体
 }
 
 // GPT prompt matching archive backend combined_judge_plan_modify.py
 function createGPTPrompt(
-    numberedText: string, 
+    text: string, 
     utterance: string, 
     historySummary: string,
     history: TextModificationHistory[],
@@ -61,12 +55,11 @@ function createGPTPrompt(
 - 商品説明文をそのまま読んでいるだけの場合なども想定されますが、その場合は修正は不要です。
 - 「元に戻して」系の発話の場合も修正を検討します。
 
-## ステップ2: 修正指示の生成（修正が必要な場合のみ）
-修正が必要と判断した場合は、以下の方針で具体的な修正指示を生成してください：
+## ステップ2: 修正文章の生成（修正が必要な場合のみ）
+修正が必要と判断した場合は、以下の方針で修正後の文章全体を生成してください：
 - ユーザーから特段指示がない限りは、文章のスタイル（箇条書き、文体など）は基本的に維持する
 - 制約条件が提示されている場合は、それらを考慮してバランスの取れた修正を提案する
 - 「元に戻して」系の発話の場合は、履歴から適切な過去の状態や特徴を特定して復元する
-- 必要最小限の修正のみを行い、変更不要な行には言及しない
 - フリマアプリの商品説明として適切な表現を心がける
 - 画像の内容と説明文の整合性を確認する
 - 一度の変更で文章を長くし過ぎたり、短くしすぎたりすると、ユーザーが読むのが辛くなってしまうので、修正は控えめでお願いします。
@@ -77,72 +70,21 @@ function createGPTPrompt(
 {
     "should_edit": "no" または "yes",
     "plan": "修正方針の説明（ユーザーが直感的に確認しやすいようになるべく短くシンプルに）",
-    "content": [
-        {
-            "line": 行番号（数値）,
-            "command": "add" | "delete" | "modify",
-            "text": "追加・変更する内容（deleteの場合は空文字列）"
-        }
-    ]
+    "content": "修正後の商品説明文全体"
 }
-
-should_editが"no"の場合はplanは空文字列、contentは空配列にしてください。
-should_editが"yes"の場合は修正方針をplanに、修正指示をcontentに配列で含めてください。
-                       
-addは行番号の次に追加します。
 
 ## 注意点
 - JSON形式のみを返してください。説明や理由は含めないでください
 - 個人が出品する一点物の商品の説明文章なので、他の商品が存在することを前提とした表現や説明になることはありません
 - 文章として読みやすいようにスタイルには特に気をつけてください
-1. 箇条書きの中に急に文章が入り込んだり、空行が変なところに入り込んだりしないように注意してください
-2. 特に箇条書きに変更する際や、箇条書きを追加する際などは、空行が変なところに挟まれたり、順番がおかしくならないように注意してください
-3. 元の文章に変な空行が含まれていたり、順番がおかしい場合なども、ユーザーの発話に関係なく直していいです。
-- 重複している項目が無いように注意してください
-
-## 例: 状態項目を箇条書きに追加する場合
-入力テキスト:
-1: ふわふわの白いイタチのぬいぐるみです。
-2: - 種類: イタチのぬいぐるみ
-3: - カラー: ホワイト（しっぽは黒）
-4: - サイズ: 約20cm
-5: 
-6: 目立った汚れはありません。
-7: ご覧いただきありがとうございます。
-
-ユーザーの発話: 状態も種類などと合わせて箇条書きにして
-
-出力例:
-{
-    "should_edit": "yes",
-    "plan": "状態の情報を箇条書きの項目として追加します。",
-    "content": [
-        {
-            "line": 4,
-            "command": "add",
-            "text": "- 状態: 目立った汚れや傷はなく、美品です"
-        },
-        {
-            "line": 6,
-            "command": "delete",
-            "text": ""
-        },
-    ]
-}
-                       
-目指すテキスト:
-1: ふわふわの白いイタチのぬいぐるみです。
-2: - 種類: イタチのぬいぐるみ
-3: - カラー: ホワイト（しっぽは黒）
-4: - サイズ: 約20cm
-5: - 状態: 目立った汚れや傷はなく、美品です
-6: 
-7: ご覧いただきありがとうございます。`
+- 箇条書きの中に急に文章が入り込んだり、空行が変なところに入り込んだりしないように注意してください
+- 元の文章に変な空行が含まれていたり、順番がおかしい場合なども、ユーザーの発話に関係なく直していいです
+- 重複している項目が無いように注意してください`
         },
         {
             role: 'user',
             content: [
-                { type: 'text', text: `元の商品説明文: ${numberedText}` },
+                { type: 'text', text: `元の商品説明文: ${text}` },
                 { type: 'text', text: `ユーザーの発話: ${utterance}` },
                 { type: 'text', text: `制約条件: ${historyContext}` },
                 ...(historyText ? [{ type: 'text', text: historyText }] : []),
@@ -157,52 +99,6 @@ addは行番号の次に追加します。
     ];
 }
 
-function addLineNumbers(text: string): string {
-    const lines = text.split('\n');
-    const numberedLines: string[] = [];
-    
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i];
-        if (line.trim()) { // Only add line numbers to non-empty lines
-            numberedLines.push(`${i + 1}: ${line}`);
-        }
-    }
-    
-    return numberedLines.join('\n');
-}
-
-function applyJsonModifications(originalText: string, modifications: JsonModificationCommand[]): string {
-    const lines = originalText.split('\n');
-    
-    // Sort modifications by line number in descending order (apply from bottom to top)
-    const sortedModifications = [...modifications].sort((a, b) => b.line - a.line);
-    
-    for (const mod of sortedModifications) {
-        const lineIndex = mod.line - 1; // Convert to 0-indexed
-        
-        if (mod.command === 'modify') {
-            // Replace line
-            if (lineIndex >= 0 && lineIndex < lines.length) {
-                lines[lineIndex] = mod.text;
-            }
-        } else if (mod.command === 'add') {
-            // Insert after line
-            if (lineIndex >= 0 && lineIndex < lines.length) {
-                lines.splice(lineIndex + 1, 0, mod.text);
-            } else if (lineIndex === lines.length) {
-                // Add at the end
-                lines.push(mod.text);
-            }
-        } else if (mod.command === 'delete') {
-            // Delete line
-            if (lineIndex >= 0 && lineIndex < lines.length) {
-                lines.splice(lineIndex, 1);
-            }
-        }
-    }
-    
-    return lines.join('\n');
-}
 
 export async function POST(request: NextRequest) {
     try {
@@ -216,11 +112,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Add line numbers to text (matching archive backend)
-        const numberedText = addLineNumbers(text);
-
         // Create GPT prompt
-        const messages = createGPTPrompt(numberedText, utterance, historySummary, history, imageBase64);
+        const messages = createGPTPrompt(text, utterance, historySummary, history, imageBase64);
 
         // Call OpenAI API
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -251,7 +144,7 @@ export async function POST(request: NextRequest) {
         let parsedResponse: GPTResponse;
         try {
             parsedResponse = JSON.parse(gptResponse);
-        } catch (parseError) {
+        } catch {
             console.error('Failed to parse GPT response:', gptResponse);
             return NextResponse.json({
                 shouldEdit: false,
@@ -267,15 +160,12 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        // Apply modifications
+        // Return the modified text
         if (parsedResponse.should_edit === 'yes' && parsedResponse.content) {
-            const modifiedText = applyJsonModifications(text, parsedResponse.content);
-            
             return NextResponse.json({
                 shouldEdit: true,
-                modifiedText,
-                plan: parsedResponse.plan,
-                editPlan: parsedResponse.plan
+                modifiedText: parsedResponse.content,
+                plan: parsedResponse.plan
             });
         }
 
