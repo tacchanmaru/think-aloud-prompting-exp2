@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Types for text modification (matching archive backend types)
 interface TextModificationRequest {
@@ -86,16 +91,14 @@ function createGPTPrompt(
         {
             role: 'user',
             content: [
-                { type: 'text', text: `元の商品説明文: ${text}` },
-                { type: 'text', text: `ユーザーの現在の発話: ${utterance}` },
-                ...(pastUtterances ? [{ type: 'text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
-                ...(historySummary ? [{ type: 'text', text: `これまでの編集傾向:\n${historySummary}` }] : []),
-                ...(historyText ? [{ type: 'text', text: historyText }] : []),
+                { type: 'input_text', text: `元の商品説明文: ${text}` },
+                { type: 'input_text', text: `ユーザーの現在の発話: ${utterance}` },
+                ...(pastUtterances ? [{ type: 'input_text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
+                ...(historySummary ? [{ type: 'input_text', text: `これまでの編集傾向:\n${historySummary}` }] : []),
+                ...(historyText ? [{ type: 'input_text', text: historyText }] : []),
                 ...(imageBase64 ? [{
-                    type: 'image_url',
-                    image_url: {
-                        url: `data:image/jpeg;base64,${imageBase64}`
-                    }
+                    type: 'input_image',
+                    image_url: `data:image/jpeg;base64,${imageBase64}`
                 }] : [])
             ]
         }
@@ -119,27 +122,18 @@ export async function POST(request: NextRequest) {
         const messages = createGPTPrompt(text, utterance, pastUtterances, historySummary, history, imageBase64);
 
         // Call OpenAI API
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                model: 'gpt-4.1-mini',
-                messages: messages,
-                temperature: 0,
-            }),
+        const result = await client.responses.create({
+            model: 'gpt-5-nano',
+            input: messages,
+            reasoning: { effort: "minimal" },
+            max_output_tokens: 1000,
         });
 
-        if (!response.ok) {
-            throw new Error(`OpenAI API error: ${response.status}`);
-        }
-
-        const result = await response.json();
-        const gptResponse = result.choices[0]?.message?.content;
+        const gptResponse = (result.output_text ?? '').trim();
 
         if (!gptResponse) {
+            // デバッグ時に中身を見る
+            console.error('response.output (debug):', result.output);
             throw new Error('No response from GPT');
         }
 
