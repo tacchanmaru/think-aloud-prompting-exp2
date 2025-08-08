@@ -43,7 +43,7 @@ function createGPTPrompt(
     if (history && history.length > 0) {
         const recentHistory = history.slice(-3);
         historyText = '編集履歴:\n' + recentHistory.map(h => 
-            `- 元文章: ${h.originalText}\n  発話: ${h.utterance}\n  計画: ${h.editPlan}\n  修正後: ${h.modifiedText}\n`
+            `- 元文章: ${h.originalText}\n  ユーザーの入力: ${h.utterance}\n  計画: ${h.editPlan}\n  修正後: ${h.modifiedText}\n`
         ).join('\n');
     }
 
@@ -63,7 +63,7 @@ function createGPTPrompt(
 
 ## ステップ2: 修正文章の生成（修正が必要な場合のみ）
 修正が必要と判断した場合は、以下の方針で修正後の文章全体を生成してください。
-- これまでの編集傾向は、現在の発話と矛盾しない範囲で考慮する
+- これまでの編集傾向は、現在のユーザーの入力と矛盾しない範囲で考慮する
 - ユーザーから特段指示がない限りは、文章のスタイル（箇条書き、文体など）は基本的に維持する
 - ユーザーの入力が「元に戻して」等の場合は、履歴から適切な過去の状態や特徴を特定して復元する
 - フリマアプリの商品説明文として適切な表現を心がける
