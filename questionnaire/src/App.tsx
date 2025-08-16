@@ -4,8 +4,6 @@ import {
   susAnswerState,
   userInfoAnswerState,
   productDescriptionAnswerState,
-  preTaskAnswerState,
-  postTaskAnswerState,
 } from "./store/answerState";
 import { useRecoilValue } from "recoil";
 import { Button, Divider, Paper, Typography } from "@mui/material";
@@ -14,12 +12,10 @@ import { sub_color } from "./color";
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "./firebase";
 import { useNavigate } from "react-router-dom";
-import PreTaskQuestion from "./preTaskQuestion";
 import SUSQuestion from "./SUSQuestion";
 import NasaTLXQuestion from "./NasaTLXQuestion";
 import ProductDescriptionQuestion from "./ProductDescriptionQuestion";
 import { nasa_tlx_list, sus_list } from "./constraints";
-import PostTaskImportantPoints from "./PostTaskImportantPoints";
 import FreeDescriptionQuestion from "./FreeDescriptionQuestion";
 
 const Container = styled.div`
@@ -29,18 +25,6 @@ const Container = styled.div`
   margin: auto;
 `;
 
-const CompletionPage = () => {
-  return (
-    <Paper style={{ margin: "20px auto", padding: "40px", maxWidth: "800px", textAlign: "center" }}>
-      <Typography variant="h5" gutterBottom>
-        タスク前の質問は終わりです
-      </Typography>
-      <Typography variant="body1" style={{ marginTop: "20px" }}>
-        実験監督者にお伝えください
-      </Typography>
-    </Paper>
-  );
-};
 
 function App() {
   const navigate = useNavigate();
@@ -48,8 +32,6 @@ function App() {
   const userinfo_answer = useRecoilValue(userInfoAnswerState);
   const nasa_tlx_result = useRecoilValue(nasaTLXAnswerState);
   const sus_result = useRecoilValue(susAnswerState);
-  const pre_task_answer = useRecoilValue(preTaskAnswerState);
-  const post_task_answer = useRecoilValue(postTaskAnswerState);
   const product_description_answer = useRecoilValue(productDescriptionAnswerState);
 
   const [page, setPage] = useState(0);
@@ -73,36 +55,24 @@ function App() {
 
   const toAfterPage = () => {
     if (page == 0) {
-      if (!pre_task_answer.answer1 || !pre_task_answer.answer2 || !pre_task_answer.answer3) {
-        alert("タスク前の質問に回答してください。");
+      if (sus_result.length !== sus_list.length) {
+        alert("質問紙①（SUS）に回答してください。");
         return;
       }
     } else if (page == 1) {
-      alert("タスク後の質問に移動します。");
+      if (nasa_tlx_result.length !== nasa_tlx_list.length) {
+        alert("質問紙②（NASA-TLX）に回答してください。");
+        return;
+      }
     } else if (page == 2) {
-      if (!post_task_answer.answer1 || !post_task_answer.answer2 || !post_task_answer.answer3) {
-        alert("タスク後の質問①に回答してください。");
+      if (!product_description_answer.satisfaction || !product_description_answer.guilt || 
+          !product_description_answer.ownership || !product_description_answer.honesty) {
+        alert("質問紙③（商品説明文）に回答してください。");
         return;
       }
     } else if (page == 3) {
-      if (sus_result.length !== sus_list.length) {
-        alert("タスク後の質問②（SUS）に回答してください。");
-        return;
-      }
-    } else if (page == 4) {
-      if (nasa_tlx_result.length !== nasa_tlx_list.length) {
-        alert("タスク後の質問③（NASA-TLX）に回答してください。");
-        return;
-      }
-    } else if (page == 5) {
-      if (!product_description_answer.satisfaction || !product_description_answer.guilt || 
-          !product_description_answer.ownership || !product_description_answer.honesty) {
-        alert("タスク後の質問④（商品説明文）に回答してください。");
-        return;
-      }
-    } else if (page == 6) {
       if (!product_description_answer.freeText) {
-        alert("タスク後の質問⑤（自由記述）に回答してください。");
+        alert("質問紙④（自由記述）に回答してください。");
         return;
       }
     }
@@ -127,8 +97,6 @@ function App() {
           user_id: userinfo_answer.user_id,
           condition: userinfo_answer.condition
         },
-        pre_task: pre_task_answer,
-        post_task: post_task_answer,
         nasa_tlx: nasa_tlx_result,
         sus: sus_result,
         product_description: product_description_answer,
@@ -216,9 +184,6 @@ function App() {
   };
 
   const pages = [
-    <PreTaskQuestion />,
-    <CompletionPage />,
-    <PostTaskImportantPoints />,
     renderSUSQuestions(),
     renderNasaTLXQuestions(),
     <ProductDescriptionQuestion />,
@@ -226,13 +191,10 @@ function App() {
   ];
 
   const pageTitles = [
-    "タスク前の質問",
-    "タスク前の質問（完了）",
-    "タスク後の質問①",
-    "タスク後の質問②",
-    "タスク後の質問③",
-    "タスク後の質問④",
-    "タスク後の質問⑤",
+    "質問紙①",
+    "質問紙②",
+    "質問紙③",
+    "質問紙④",
   ];
 
   const lastPage = pages.length - 1;
@@ -256,7 +218,7 @@ function App() {
 
       <Divider />
       <div style={{ margin: "20px auto", maxWidth: "800px", display: "flex" }}>
-        {page > 0 && page !== 1 && (
+        {page > 0 && (
           <Paper
             style={{ margin: "10px", padding: "10px", width: "50%" }}
             onClick={toBeforePage}
