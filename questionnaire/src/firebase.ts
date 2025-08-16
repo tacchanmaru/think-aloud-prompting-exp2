@@ -6,12 +6,12 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCsQrS0CNWqPXKsOn3vj6GPeMkoMihG4z0",
-  authDomain: "think-aloud-in-the-loop.firebaseapp.com",
-  projectId: "think-aloud-in-the-loop",
-  storageBucket: "think-aloud-in-the-loop.firebasestorage.app",
-  messagingSenderId: "172885386258",
-  appId: "1:172885386258:web:788ae342bc0af6707b64cb"
+  apiKey: "AIzaSyDAKLMfxKH0RwdGh2QF_hWVHR2qUH4nHm0",
+  authDomain: "think-aloud-prompting-exp2.firebaseapp.com",
+  projectId: "think-aloud-prompting-exp2",
+  storageBucket: "think-aloud-prompting-exp2.firebasestorage.app",
+  messagingSenderId: "123456789012",
+  appId: "1:123456789012:web:abcdef123456789"
 };
 
 // Initialize Firebase

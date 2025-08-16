@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 3000",
     "build": "tsc && vite build",
-    "build:prod": "tsc && vite build --base=/think-aloud-in-the-loop-questionnaire/",
+    "build:prod": "tsc && vite build --base=/think-aloud-prompting-exp2/questionnaire/",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
