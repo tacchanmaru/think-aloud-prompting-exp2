@@ -91,14 +91,16 @@ function createGPTPrompt(
         {
             role: 'user',
             content: [
-                { type: 'input_text', text: `元の商品説明文: ${text}` },
-                { type: 'input_text', text: `ユーザーの現在の発話: ${utterance}` },
-                ...(pastUtterances ? [{ type: 'input_text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
-                ...(historySummary ? [{ type: 'input_text', text: `これまでの編集傾向:\n${historySummary}` }] : []),
-                ...(historyText ? [{ type: 'input_text', text: historyText }] : []),
+                { type: 'text', text: `元の商品説明文: ${text}` },
+                { type: 'text', text: `ユーザーの現在の発話: ${utterance}` },
+                ...(pastUtterances ? [{ type: 'text', text: `ユーザーの過去の発話: ${pastUtterances}` }] : []),
+                ...(historySummary ? [{ type: 'text', text: `これまでの編集傾向:\n${historySummary}` }] : []),
+                ...(historyText ? [{ type: 'text', text: historyText }] : []),
                 ...(imageBase64 ? [{
-                    type: 'input_image',
-                    image_url: `data:image/jpeg;base64,${imageBase64}`
+                    type: 'image_url',
+                    image_url: {
+                        url: `data:image/jpeg;base64,${imageBase64}`
+                    }
                 }] : [])
             ]
         }
@@ -118,18 +120,17 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create GPT prompt
+        // Create GPT messages
         const messages = createGPTPrompt(text, utterance, pastUtterances, historySummary, history, imageBase64);
 
         // Call OpenAI API
-        const result = await client.responses.create({
-            model: 'gpt-5-nano',
-            input: messages,
-            reasoning: { effort: "minimal" },
-            max_output_tokens: 1000,
+        const result = await client.chat.completions.create({
+            model: 'gpt-4.1-mini',
+            messages: messages,
+            temperature: 0,
         });
 
-        const gptResponse = (result.output_text ?? '').trim();
+        const gptResponse = (result.choices[0]?.message?.content ?? '').trim();
 
         if (!gptResponse) {
             console.error('response.output (debug):', result.output);

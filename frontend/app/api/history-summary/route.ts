@@ -54,17 +54,16 @@ ${historyText}
 上記の履歴から、ユーザーが実際に行った編集指示とその傾向を記録してください。発話内容を「」で引用しながら、簡潔に解釈を加えてください。
 ${currentSummary ? '既存の記録に新しい傾向を追加したり、矛盾する場合は更新してください。' : ''}`;
 
-    const completion = await client.responses.create({
-      model: 'gpt-5-nano',
-      input: [
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4.1-mini',
+      messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      reasoning: { effort: "minimal" },
-      max_output_tokens: 1000,
+      temperature: 0,
     });
 
-    const historySummary = completion.output_text || '';
+    const historySummary = completion.choices[0]?.message?.content || '';
 
     return NextResponse.json({ historySummary });
 
