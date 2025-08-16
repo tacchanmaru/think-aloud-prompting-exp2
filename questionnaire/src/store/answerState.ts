@@ -37,17 +37,6 @@ export interface ProductDescriptionState {
   freeText: string;
 }
 
-export interface PreTaskAnswer {
-  answer1: string;
-  answer2: string;
-  answer3: string;
-}
-
-export interface PostTaskAnswer {
-  answer1: string;
-  answer2: string;
-  answer3: string;
-}
 
 export const userInfoAnswerState = atom<UserInfoState>({
   key: "user-info-answer",
@@ -60,15 +49,6 @@ export const userInfoAnswerState = atom<UserInfoState>({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const preTaskAnswerState = atom<PreTaskAnswer>({
-  key: 'pre-task-answer',
-  default: {
-    answer1: "",
-    answer2: "",
-    answer3: ""
-  },
-  effects_UNSTABLE: [persistAtom],
-});
 
 export const productDescriptionAnswerState = atom<ProductDescriptionState>({
   key: 'product-description-answers',
@@ -88,12 +68,3 @@ export const susAnswerState = atom<AnswerState[]>({
   effects_UNSTABLE: [persistAtom], // データの永続化
 });
 
-export const postTaskAnswerState = atom<PostTaskAnswer>({
-  key: 'post-task-answer',
-  default: {
-    answer1: "",
-    answer2: "",
-    answer3: ""
-  },
-  effects_UNSTABLE: [persistAtom],
-});
