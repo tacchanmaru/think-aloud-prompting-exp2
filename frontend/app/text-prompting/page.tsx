@@ -41,7 +41,6 @@ function TextPromptingPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isDescriptionClicked, setIsDescriptionClicked] = useState(false);
-    const [pastUtterances, setPastUtterances] = useState<string>('');  // 過去の発話を「、」で区切って保存
     
     const descriptionDisplayRef = useRef<HTMLDivElement | null>(null);
 
@@ -58,7 +57,7 @@ function TextPromptingPage() {
                 body: JSON.stringify({
                     text: textContent,
                     utterance: utterance,
-                    pastUtterances: pastUtterances,
+                    pastUtterances: '',
                     imageBase64: imagePreview ? imagePreview.split(',')[1] : undefined,
                     history: modificationHistory,
                     historySummary: historySummary
@@ -88,7 +87,7 @@ function TextPromptingPage() {
                     editPlan: result.plan || '',
                     originalText: previousText,
                     modifiedText: result.modifiedText,
-                    pastUtterances: pastUtterances,
+                    pastUtterances: '',
                     historySummary: historySummary,
                 };
                 
@@ -107,7 +106,7 @@ function TextPromptingPage() {
             console.error('Error in text modification:', error);
             throw error; // Re-throw to be handled by caller
         }
-    }, [textContent, imagePreview, modificationHistory, historySummary, pastUtterances]);
+    }, [textContent, imagePreview, modificationHistory, historySummary]);
 
     const updateHistorySummary = useCallback(async (history: typeof modificationHistory) => {
         // history summaryの更新は編集履歴が2つ以上の場合のみ実行
@@ -250,15 +249,6 @@ function TextPromptingPage() {
             // Process text modification
             await processTextModification(promptText.trim());
             
-            // Add current prompt to past utterances
-            setPastUtterances(prev => {
-                if (prev) {
-                    return prev + '、' + promptText.trim();
-                } else {
-                    return promptText.trim();
-                }
-            });
-            
             // Clear prompt input
             setPromptText('');
             
@@ -294,7 +284,7 @@ function TextPromptingPage() {
                 durationSeconds: getDurationSeconds(),
                 intermediateSteps: modificationHistory.map(item => ({
                     utterance: item.utterance,
-                    past_utterances: item.pastUtterances,
+                    past_utterances: '',
                     edit_plan: item.editPlan,
                     modified_text: item.modifiedText,
                     history_summary: item.historySummary
