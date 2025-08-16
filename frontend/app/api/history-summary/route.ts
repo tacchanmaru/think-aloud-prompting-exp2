@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
+const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
@@ -54,16 +54,17 @@ ${historyText}
 上記の履歴から、ユーザーが実際に行った編集指示とその傾向を記録してください。発話内容を「」で引用しながら、簡潔に解釈を加えてください。
 ${currentSummary ? '既存の記録に新しい傾向を追加したり、矛盾する場合は更新してください。' : ''}`;
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4.1-mini',
-      messages: [
+    const completion = await client.responses.create({
+      model: 'gpt-5-nano',
+      input: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0,
+      reasoning: { effort: "minimal" },
+      max_output_tokens: 1000,
     });
 
-    const historySummary = completion.choices[0]?.message?.content || '';
+    const historySummary = completion.output_text || '';
 
     return NextResponse.json({ historySummary });
 
