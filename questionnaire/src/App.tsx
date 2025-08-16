@@ -37,6 +37,7 @@ function App() {
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [taskDataStore, setTaskDataStore] = useState<any[]>([]);
   const topref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,24 +91,32 @@ function App() {
   };
 
   const sendTaskData = async (taskNumber: number) => {
+    const taskData = {
+      task_number: taskNumber,
+      nasa_tlx: nasa_tlx_result,
+      sus: sus_result,
+      product_description: product_description_answer,
+      timestamp: new Date(),
+    };
+    
+    // 個別保存
     const doc_id = `${new Date().toISOString()}_task${taskNumber}`;
     try {
-      await setDoc(doc(db, "answers", doc_id), {
+      await setDoc(doc(db, "questionnaire_individual", doc_id), {
         user_info: {
           user_id: userinfo_answer.user_id,
           condition: userinfo_answer.condition
         },
-        task_number: taskNumber,
-        nasa_tlx: nasa_tlx_result,
-        sus: sus_result,
-        product_description: product_description_answer,
-        timestamp: new Date(),
+        ...taskData,
       });
       console.log(`Task ${taskNumber} data written with ID: `, doc_id);
     } catch (e) {
       console.error(`Error adding task ${taskNumber} document: `, e);
       alert(`タスク${taskNumber}の送信に失敗しました。`);
     }
+    
+    // タスクデータを蓄積
+    setTaskDataStore(prev => [...prev, taskData]);
   };
 
   const sendAnswer = async () => {
@@ -121,8 +130,37 @@ function App() {
       return;
     }
     
-    // 最終タスク（タスク3）のデータを送信
+    // 最終タスク（タスク3）のデータを個別保存＆蓄積
     await sendTaskData(3);
+    
+    // 3つのタスクをまとめて統合データとして保存
+    const finalDocId = new Date().toISOString();
+    const finalTaskData = {
+      task_number: 3,
+      nasa_tlx: nasa_tlx_result,
+      sus: sus_result,
+      product_description: product_description_answer,
+      timestamp: new Date(),
+    };
+    
+    try {
+      await setDoc(doc(db, "questionnaire", finalDocId), {
+        user_info: {
+          user_id: userinfo_answer.user_id,
+          condition: userinfo_answer.condition
+        },
+        task1: taskDataStore[0] || null,
+        task2: taskDataStore[1] || null,
+        task3: finalTaskData,
+        final_timestamp: new Date(),
+      });
+      console.log("Final questionnaire data written with ID: ", finalDocId);
+    } catch (e) {
+      console.error("Error adding final questionnaire document: ", e);
+      alert("最終データの送信に失敗しました。");
+      return;
+    }
+    
     navigate("/end");
   };
 

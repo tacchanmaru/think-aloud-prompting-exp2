@@ -1,8 +1,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // answersコレクションへの書き込みを許可
-    match /answers/{document} {
+    // questionnaireコレクションへの書き込みを許可
+    match /questionnaire/{document} {
+      allow create: if true;
+    }
+    
+    // questionnaire_individualコレクションへの書き込みを許可
+    match /questionnaire_individual/{document} {
       allow create: if true;
     }
     
