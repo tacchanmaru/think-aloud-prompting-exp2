@@ -63,3 +63,8 @@ Thumbs.db
 **/public/sw.js.map
 **/public/workbox-*.js.map
 **/public/worker-*.js.map
+
+# questionnaire
+**/questionnaire/.pnp.cjs
+**/questionnaire/.pnp.loader.mjs
+**/questionnaire/.yarn/install-state.gz
