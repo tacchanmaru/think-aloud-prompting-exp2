@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 以下の編集履歴から、ユーザーの編集傾向を抽出してください：
 
 # 記録のルール
-1. ユーザーの実際の発話を「」で引用しながら、その意図を簡潔に解釈する
+1. ユーザーの実際の入力を「」で引用しながら、その意図を簡潔に解釈する
 2. 強すぎる一般化は避け、具体的な文脈を含める
 3. 最新の指示をより重視する
 4. 矛盾する指示がある場合は、その変化も記録する
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // 履歴をテキスト形式に変換
     const historyText = history.map((item, index) => `
 ## 編集 ${index + 1}
-**ユーザー発言**: ${item.utterance}
+**ユーザー入力**: ${item.utterance}
 **編集計画**: ${item.editPlan}
 **元テキスト**: ${item.originalText}
 **修正後テキスト**: ${item.modifiedText}
@@ -51,20 +51,19 @@ export async function POST(request: NextRequest) {
     const userPrompt = `${currentSummary ? `現在の編集傾向の記録:\n${currentSummary}\n\n` : ''}編集履歴:
 ${historyText}
 
-上記の履歴から、ユーザーが実際に行った編集指示とその傾向を記録してください。発話内容を「」で引用しながら、簡潔に解釈を加えてください。
+上記の履歴から、ユーザーが実際に行った編集指示とその傾向を記録してください。ユーザーの入力内容を「」で引用しながら、簡潔に解釈を加えてください。
 ${currentSummary ? '既存の記録に新しい傾向を追加したり、矛盾する場合は更新してください。' : ''}`;
 
-    const completion = await client.responses.create({
-      model: 'gpt-5-nano',
-      input: [
+    const completion = await client.chat.completions.create({
+      model: 'gpt-4.1-mini',
+      messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      reasoning: { effort: "minimal" },
-      max_output_tokens: 1000,
+      temperature: 0,
     });
 
-    const historySummary = completion.output_text || '';
+    const historySummary = completion.choices[0]?.message?.content || '';
 
     return NextResponse.json({ historySummary });
 
