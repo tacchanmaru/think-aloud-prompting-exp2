@@ -5,8 +5,6 @@ import {
   susAnswerState,
   userInfoAnswerState,
   productDescriptionAnswerState,
-  preTaskAnswerState,
-  postTaskAnswerState,
 } from "./store/answerState";
 import UserQuestion from "./UserQuestion";
 import styled from "@emotion/styled";
@@ -27,8 +25,6 @@ const Start = () => {
   const setUserInfo = useSetRecoilState(userInfoAnswerState);
   const setNasaTLX = useSetRecoilState(nasaTLXAnswerState);
   const setSUS = useSetRecoilState(susAnswerState);
-  const setPreTask = useSetRecoilState(preTaskAnswerState);
-  const setPostTask = useSetRecoilState(postTaskAnswerState);
   const setProductDescription = useSetRecoilState(productDescriptionAnswerState);
 
   useEffect(() => {
@@ -41,16 +37,6 @@ const Start = () => {
     });
     setNasaTLX([]);
     setSUS([]);
-    setPreTask({
-      answer1: "",
-      answer2: "",
-      answer3: "",
-    });
-    setPostTask({
-      answer1: "",
-      answer2: "",
-      answer3: "",
-    });
     setProductDescription({
       satisfaction: 0,
       guilt: 0,

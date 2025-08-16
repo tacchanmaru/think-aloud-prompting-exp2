@@ -11,7 +11,7 @@ const FreeDescriptionQuestion = () => {
     if (formAnswer && formAnswer.freeText) {
       setAnswer(formAnswer.freeText);
     }
-  }, [formAnswer]);
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
