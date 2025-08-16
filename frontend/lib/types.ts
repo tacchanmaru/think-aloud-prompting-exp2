@@ -1,7 +1,7 @@
 // 基本的な実験データの型
 export interface BaseExperimentData {
     userId: number;        // 1-100の範囲のユーザーID
-    experimentType: 'manual' | 'think-aloud';
+    experimentType: 'manual' | 'think-aloud' | 'text-prompting';
     productId: string;
     originalText: string;
     finalText: string;
@@ -31,5 +31,11 @@ export interface ThinkAloudExperimentResult extends BaseExperimentData {
     intermediateSteps: IntermediateStep[];
 }
 
+// Text-Prompting実験の結果
+export interface TextPromptingExperimentResult extends BaseExperimentData {
+    experimentType: 'text-prompting';
+    intermediateSteps: IntermediateStep[];
+}
+
 // 実験結果の統合型
-export type ExperimentResult = ManualExperimentResult | ThinkAloudExperimentResult;
+export type ExperimentResult = ManualExperimentResult | ThinkAloudExperimentResult | TextPromptingExperimentResult;
