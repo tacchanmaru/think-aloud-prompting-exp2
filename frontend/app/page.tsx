@@ -199,13 +199,6 @@ function HomePage() {
                             >
                                 思考発話AI（練習用）
                             </button>
-                            <button 
-                                className={`menu-button practice ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/text-prompting?practice=true")}
-                                disabled={!userId}
-                            >
-                                テキストプロンプト（練習用）
-                            </button>
                         </div>
                         
                         <div className="menu-divider"></div>
@@ -232,13 +225,6 @@ function HomePage() {
                                 disabled={!userId}
                             >
                                 思考発話AI
-                            </button>
-                            <button 
-                                className={`menu-button ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/text-prompting")}
-                                disabled={!userId}
-                            >
-                                テキストプロンプト
                             </button>
                         </div>
                     </div>
