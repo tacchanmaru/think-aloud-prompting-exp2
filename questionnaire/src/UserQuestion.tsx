@@ -45,9 +45,22 @@ const UserQuestion = () => {
       return;
     }
     
-    // ユーザーIDに基づいて条件を自動選択
-    const conditions = ["manual_product1", "manual_product2", "thinkaloud_product1", "thinkaloud_product2"];
-    const selectedCondition = conditions[num % 4];
+    // ユーザーIDに基づいて条件を自動選択（12パターン）
+    const conditions = [
+      "TP_TAP_1_2_3",  // 0
+      "TP_TAP_2_3_1",  // 1
+      "TP_TAP_3_1_2",  // 2
+      "TAP_TP_1_2_3",  // 3
+      "TAP_TP_2_3_1",  // 4
+      "TAP_TP_3_1_2",  // 5
+      "TP_TAP_1_3_2",  // 6
+      "TP_TAP_2_1_3",  // 7
+      "TP_TAP_3_2_1",  // 8
+      "TAP_TP_1_3_2",  // 9
+      "TAP_TP_2_1_3",  // 10
+      "TAP_TP_3_2_1"   // 11
+    ];
+    const selectedCondition = conditions[num % 12];
 
     setLocalAnswer((old) => {
       return {
@@ -115,10 +128,18 @@ const UserQuestion = () => {
             value={localAnswer.condition || ""}
             onChange={setCondition}
           >
-            <FormControlLabel value="manual_product1" control={<Radio />} label="手動入力（商品１）" />
-            <FormControlLabel value="manual_product2" control={<Radio />} label="手動入力（商品２）" />
-            <FormControlLabel value="thinkaloud_product1" control={<Radio />} label="Think-Aloud（商品１）" />
-            <FormControlLabel value="thinkaloud_product2" control={<Radio />} label="Think-Aloud（商品２）" />
+            <FormControlLabel value="TP_TAP_1_2_3" control={<Radio />} label="TP_TAP_1_2_3" />
+            <FormControlLabel value="TP_TAP_2_3_1" control={<Radio />} label="TP_TAP_2_3_1" />
+            <FormControlLabel value="TP_TAP_3_1_2" control={<Radio />} label="TP_TAP_3_1_2" />
+            <FormControlLabel value="TAP_TP_1_2_3" control={<Radio />} label="TAP_TP_1_2_3" />
+            <FormControlLabel value="TAP_TP_2_3_1" control={<Radio />} label="TAP_TP_2_3_1" />
+            <FormControlLabel value="TAP_TP_3_1_2" control={<Radio />} label="TAP_TP_3_1_2" />
+            <FormControlLabel value="TP_TAP_1_3_2" control={<Radio />} label="TP_TAP_1_3_2" />
+            <FormControlLabel value="TP_TAP_2_1_3" control={<Radio />} label="TP_TAP_2_1_3" />
+            <FormControlLabel value="TP_TAP_3_2_1" control={<Radio />} label="TP_TAP_3_2_1" />
+            <FormControlLabel value="TAP_TP_1_3_2" control={<Radio />} label="TAP_TP_1_3_2" />
+            <FormControlLabel value="TAP_TP_2_1_3" control={<Radio />} label="TAP_TP_2_1_3" />
+            <FormControlLabel value="TAP_TP_3_2_1" control={<Radio />} label="TAP_TP_3_2_1" />
           </RadioGroup>
         </FormControl>
       </Paper>

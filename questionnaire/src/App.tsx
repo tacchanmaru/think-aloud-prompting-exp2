@@ -17,6 +17,7 @@ import NasaTLXQuestion from "./NasaTLXQuestion";
 import ProductDescriptionQuestion from "./ProductDescriptionQuestion";
 import { nasa_tlx_list, sus_list } from "./constraints";
 import FreeDescriptionQuestion from "./FreeDescriptionQuestion";
+import AdminConfirmation from "./AdminConfirmation";
 
 const Container = styled.div`
   min-height: 100vh;
@@ -36,6 +37,7 @@ function App() {
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [taskDataStore, setTaskDataStore] = useState<any[]>([]);
   const topref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,31 +55,68 @@ function App() {
     topref.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const toAfterPage = () => {
-    if (page == 0) {
+  const toAfterPage = async () => {
+    const taskPage = currentTaskPage;
+    const taskNum = currentTask + 1;
+    
+    // 各ページのバリデーション
+    if (taskPage === 0) { // SUS
       if (sus_result.length !== sus_list.length) {
-        alert("質問紙①（SUS）に回答してください。");
+        alert(`質問紙${taskNum}（SUS）に回答してください。`);
         return;
       }
-    } else if (page == 1) {
+    } else if (taskPage === 1) { // NASA-TLX
       if (nasa_tlx_result.length !== nasa_tlx_list.length) {
-        alert("質問紙②（NASA-TLX）に回答してください。");
+        alert(`質問紙${taskNum}（NASA-TLX）に回答してください。`);
         return;
       }
-    } else if (page == 2) {
+    } else if (taskPage === 2) { // 商品説明文
       if (!product_description_answer.satisfaction || !product_description_answer.guilt || 
           !product_description_answer.ownership || !product_description_answer.honesty) {
-        alert("質問紙③（商品説明文）に回答してください。");
+        alert(`質問紙${taskNum}（商品説明文）に回答してください。`);
         return;
       }
-    } else if (page == 3) {
+    } else if (taskPage === 3) { // 自由記述
       if (!product_description_answer.freeText) {
-        alert("質問紙④（自由記述）に回答してください。");
+        alert(`質問紙${taskNum}（自由記述）に回答してください。`);
         return;
       }
+    } else if (taskPage === 4) { // 管理者確認画面の「次へ」
+      // 現在のタスクのデータをFirebaseに送信
+      await sendTaskData(currentTask + 1);
     }
+    
     setPage((page) => page + 1);
     topref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const sendTaskData = async (taskNumber: number) => {
+    const taskData = {
+      task_number: taskNumber,
+      nasa_tlx: nasa_tlx_result,
+      sus: sus_result,
+      product_description: product_description_answer,
+      timestamp: new Date(),
+    };
+    
+    // 個別保存
+    const doc_id = `${new Date().toISOString()}_task${taskNumber}`;
+    try {
+      await setDoc(doc(db, "questionnaire_individual", doc_id), {
+        user_info: {
+          user_id: userinfo_answer.user_id,
+          condition: userinfo_answer.condition
+        },
+        ...taskData,
+      });
+      console.log(`Task ${taskNumber} data written with ID: `, doc_id);
+    } catch (e) {
+      console.error(`Error adding task ${taskNumber} document: `, e);
+      alert(`タスク${taskNumber}の送信に失敗しました。`);
+    }
+    
+    // タスクデータを蓄積
+    setTaskDataStore(prev => [...prev, taskData]);
   };
 
   const sendAnswer = async () => {
@@ -90,25 +129,39 @@ function App() {
       alert("回答が完了していません。");
       return;
     }
-    const doc_id = new Date().toISOString();
+    
+    // 最終タスク（タスク3）のデータを個別保存＆蓄積
+    await sendTaskData(3);
+    
+    // 3つのタスクをまとめて統合データとして保存
+    const finalDocId = new Date().toISOString();
+    const finalTaskData = {
+      task_number: 3,
+      nasa_tlx: nasa_tlx_result,
+      sus: sus_result,
+      product_description: product_description_answer,
+      timestamp: new Date(),
+    };
+    
     try {
-      await setDoc(doc(db, "answers", doc_id), {
+      await setDoc(doc(db, "questionnaire", finalDocId), {
         user_info: {
           user_id: userinfo_answer.user_id,
           condition: userinfo_answer.condition
         },
-        nasa_tlx: nasa_tlx_result,
-        sus: sus_result,
-        product_description: product_description_answer,
-        timestamp: new Date(),
+        task1: taskDataStore[0] || null,
+        task2: taskDataStore[1] || null,
+        task3: finalTaskData,
+        final_timestamp: new Date(),
       });
-      console.log("Document written with ID: ", doc_id);
-      // alert("送信が完了しました。");
-      navigate("/end");
+      console.log("Final questionnaire data written with ID: ", finalDocId);
     } catch (e) {
-      console.error("Error adding document: ", e);
-      alert("送信に失敗しました。");
+      console.error("Error adding final questionnaire document: ", e);
+      alert("最終データの送信に失敗しました。");
+      return;
     }
+    
+    navigate("/end");
   };
 
   const renderSUSQuestions = () => {
@@ -183,19 +236,42 @@ function App() {
     );
   };
 
+  // 現在のタスク（0, 1, 2）と各タスク内のページ（0-4）を管理
+  const currentTask = Math.floor(page / 5); // 0, 1, 2 (タスク1, 2, 3)
+  const currentTaskPage = page % 5; // 0-4 (各タスク内のページ)
+  
   const pages = [
-    renderSUSQuestions(),
-    renderNasaTLXQuestions(),
-    <ProductDescriptionQuestion />,
-    <FreeDescriptionQuestion />,
+    // Task 1 (pages 0-4)
+    renderSUSQuestions(),          // 0: 質問紙①(1/4)
+    renderNasaTLXQuestions(),      // 1: 質問紙①(2/4)
+    <ProductDescriptionQuestion />, // 2: 質問紙①(3/4)
+    <FreeDescriptionQuestion />,   // 3: 質問紙①(4/4)
+    <AdminConfirmation taskNumber={1} />, // 4: 管理者確認画面
+    
+    // Task 2 (pages 5-9)
+    renderSUSQuestions(),          // 5: 質問紙②(1/4)
+    renderNasaTLXQuestions(),      // 6: 質問紙②(2/4)
+    <ProductDescriptionQuestion />, // 7: 質問紙②(3/4)
+    <FreeDescriptionQuestion />,   // 8: 質問紙②(4/4)
+    <AdminConfirmation taskNumber={2} />, // 9: 管理者確認画面
+    
+    // Task 3 (pages 10-13)
+    renderSUSQuestions(),          // 10: 質問紙③(1/4)
+    renderNasaTLXQuestions(),      // 11: 質問紙③(2/4)
+    <ProductDescriptionQuestion />, // 12: 質問紙③(3/4)
+    <FreeDescriptionQuestion />,   // 13: 質問紙③(4/4)
   ];
 
-  const pageTitles = [
-    "質問紙①",
-    "質問紙②",
-    "質問紙③",
-    "質問紙④",
-  ];
+  const getPageTitle = () => {
+    const taskNum = currentTask + 1;
+    if (currentTaskPage === 4) {
+      return `質問紙${taskNum}（完了）`;
+    }
+    if (currentTaskPage <= 3) {
+      return `質問紙${taskNum}（${currentTaskPage + 1}/4）`;
+    }
+    return `質問紙${taskNum}`;
+  };
 
   const lastPage = pages.length - 1;
 
@@ -210,7 +286,7 @@ function App() {
           maxWidth: "800px",
         }}
       >
-        {pageTitles[page]}
+        {getPageTitle()}
       </Paper>
       {pages.map((p, i) => {
         return <Page key={i} isShow={page === i}>{p}</Page>;
