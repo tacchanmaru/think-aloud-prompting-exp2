@@ -251,7 +251,7 @@ function App() {
         {pageTitles[page]}
       </Paper>
       {pages.map((p, i) => {
-        return <Page isShow={page === i}>{p}</Page>;
+        return <Page key={i} isShow={page === i}>{p}</Page>;
       })}
 
       <Divider />
