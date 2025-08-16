@@ -6,12 +6,13 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDAKLMfxKH0RwdGh2QF_hWVHR2qUH4nHm0",
+  apiKey: "AIzaSyC6WT75aNX6y9sSl2F95FXB_vp0XoCmZpk",
   authDomain: "think-aloud-prompting-exp2.firebaseapp.com",
   projectId: "think-aloud-prompting-exp2",
   storageBucket: "think-aloud-prompting-exp2.firebasestorage.app",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456789"
+  messagingSenderId: "1040317309036",
+  appId: "1:1040317309036:web:c016610159fd8431edf849",
+  measurementId: "G-7WDHYXX57S"
 };
 
 // Initialize Firebase
