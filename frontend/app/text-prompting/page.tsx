@@ -327,9 +327,8 @@ function TextPromptingPage() {
                         <div
                             ref={descriptionDisplayRef}
                             className="text-editor cursor-pointer select-none"
-                            onMouseDown={() => setIsDescriptionClicked(true)}
-                            onMouseUp={() => setIsDescriptionClicked(false)}
-                            onMouseLeave={() => setIsDescriptionClicked(false)}
+                            onTouchStart={() => setIsDescriptionClicked(true)}
+                            onTouchEnd={() => setIsDescriptionClicked(false)}
                             style={{ 
                                 minHeight: 'calc(12px * 1.6 * 5)', // manual-editと同じ最小5行の高さ
                                 whiteSpace: 'pre-line', 
