@@ -717,7 +717,7 @@ function ThinkAloudPage() {
                                     onClick={handleComplete}
                                     disabled={isProcessing || modificationHistory.length === 0}
                                 >
-                                    完了
+                                    編集完了
                                 </button>
                             </div>
                         </div>

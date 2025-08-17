@@ -369,7 +369,7 @@ function TextPromptingPage() {
                                         value={promptText}
                                         onChange={(e) => setPromptText(e.target.value)}
                                         onKeyPress={handleKeyPress}
-                                        placeholder="商品説明を修正するプロンプトを入力してください..."
+                                        placeholder="どのように編集しますか..."
                                         className="prompt-input"
                                         rows={3}
                                         disabled={isProcessing}
@@ -387,7 +387,7 @@ function TextPromptingPage() {
                                     onClick={handleComplete}
                                     disabled={isProcessing || modificationHistory.length === 0}
                                 >
-                                    完了
+                                    編集完了
                                 </button>
                             </div>
                         </div>
