@@ -1,4 +1,8 @@
 /* 基本的なリセットとライトテーマの設定 */
+:root {
+    --product-description-font-size: 12px;
+}
+
 html,
 body {
     background-color: #ffffff;
@@ -368,7 +372,7 @@ body {
     padding: 14px;
     margin-bottom: 20px;
     color: #212529;
-    font-size: 14px;
+    font-size: var(--product-description-font-size);
     line-height: 1.6;
     text-align: left;
     white-space: pre-wrap;
@@ -484,7 +488,7 @@ body {
     border: 1px solid #dee2e6;
     border-radius: 8px;
     padding: 14px;
-    font-size: 14px;
+    font-size: var(--product-description-font-size);
     line-height: 1.6;
     transition: border-color 0.2s ease;
     white-space: pre-wrap;
@@ -630,7 +634,7 @@ body {
 
 .transcript-text {
     color: #212529;
-    font-size: 13px;
+    font-size: var(--product-description-font-size);
     word-wrap: break-word;
     line-height: 1.4;
 }
@@ -638,7 +642,7 @@ body {
 .no-transcript {
     color: #495057;
     font-style: italic;
-    font-size: 13px;
+    font-size: var(--product-description-font-size);
     text-align: center;
     width: 100%;
 }
@@ -1265,7 +1269,7 @@ body {
 
 .product-text {
     color: #495057;
-    font-size: 0.9rem;
+    font-size: var(--product-description-font-size);
     line-height: 1.5;
     margin: 0;
     white-space: pre-line;
@@ -1917,7 +1921,7 @@ body {
     border: 1px solid #dee2e6;
     border-radius: 8px;
     padding: 12px;
-    font-size: 14px;
+    font-size: var(--product-description-font-size);
     line-height: 1.4;
     resize: vertical;
     min-height: calc(14px * 1.4 * 3);
