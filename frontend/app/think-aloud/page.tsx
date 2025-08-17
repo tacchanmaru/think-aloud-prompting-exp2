@@ -653,10 +653,9 @@ function ThinkAloudPage() {
                         </div>
                         <div
                             ref={descriptionDisplayRef}
-                            className={`text-editor ${isRecording ? 'recording' : ''} cursor-pointer select-none`}
-                            onMouseDown={() => setIsDescriptionClicked(true)}
-                            onMouseUp={() => setIsDescriptionClicked(false)}
-                            onMouseLeave={() => setIsDescriptionClicked(false)}
+                            className="text-editor cursor-pointer select-none"
+                            onTouchStart={() => setIsDescriptionClicked(true)}
+                            onTouchEnd={() => setIsDescriptionClicked(false)}
                             style={{ 
                                 minHeight: 'calc(12px * 1.6 * 5)', // manual-editと同じ最小5行の高さ
                                 whiteSpace: 'pre-line', 
@@ -694,11 +693,6 @@ function ThinkAloudPage() {
                                 <div className="transcription-display">
                                     <div className="transcription-header">
                                         {isProcessing ? '⚙️ テキスト修正中...' : '🎙️ 音声認識中'}
-                                        {utteranceBuffer.length > 0 && !isProcessing && (
-                                            <span className="buffer-status">
-                                                （バッファ: {utteranceBuffer.length}件）
-                                            </span>
-                                        )}
                                     </div>
                                     <div className="transcript-items">
                                         {transcriptItems.length === 0 ? (
@@ -717,7 +711,7 @@ function ThinkAloudPage() {
                                     onClick={handleComplete}
                                     disabled={isProcessing || modificationHistory.length === 0}
                                 >
-                                    完了
+                                    編集完了
                                 </button>
                             </div>
                         </div>
