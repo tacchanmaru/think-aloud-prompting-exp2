@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
         const gptResponse = (result.choices[0]?.message?.content ?? '').trim();
 
         if (!gptResponse) {
-            console.error('response.output (debug):', result.output);
+            console.error('GPT response is null or undefined');
             throw new Error('No response from GPT');
         }
 
