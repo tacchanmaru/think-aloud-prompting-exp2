@@ -2,8 +2,6 @@
 
 import { useState, useRef } from 'react';
 import { FaImage } from 'react-icons/fa';
-import { product1, product2, practiceData } from '../../lib/products';
-import { useTimer } from '../contexts/TimerContext';
 import { getProductForExperiment, ExperimentPageType } from '../../lib/experimentUtils';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -24,8 +22,6 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
     const [generatedText, setGeneratedText] = useState<string | null>(null);
     const [showStartButton, setShowStartButton] = useState(false);
     const [isConnectingMicrophone, setIsConnectingMicrophone] = useState(false);
-    
-    const { startTimer } = useTimer();
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -46,10 +42,6 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
 
     const handleTakePhoto = () => {
         cameraInputRef.current?.click();
-    };
-
-    const handleChooseFile = () => {
-        fileInputRef.current?.click();
     };
 
     const handleUseDefaultImage = () => {

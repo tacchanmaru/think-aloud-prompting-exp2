@@ -7,7 +7,7 @@ import { useTimer } from '../contexts/TimerContext';
 import { useAuth } from '../contexts/AuthContext';
 import { saveExperimentData } from '../../lib/experimentService';
 import { ThinkAloudExperimentResult } from '../../lib/types';
-import { ExperimentPageType } from '../../lib/experimentUtils';
+import { ExperimentPageType, getProductForExperiment } from '../../lib/experimentUtils';
 
 
 // =========== ThinkAloudPage Component ===========
@@ -599,11 +599,15 @@ function ThinkAloudPage() {
             // タイマーを停止
             stopTimer();
             
+            // 動的にproductを取得してidを使用
+            const product = getProductForExperiment(userId, ExperimentPageType.ThinkAloud, isPractice);
+            const productId = product.id;
+            
             // 実験データを準備
             const experimentData: ThinkAloudExperimentResult = {
                 userId: userId || 0, // 1-100の範囲のuserId
                 experimentType: 'think-aloud',
-                productId: 'product1', // 現在はproduct1固定
+                productId: productId,
                 originalText,
                 finalText: textContent,
                 startTime: getStartTimeISO() || new Date().toISOString(),

@@ -7,7 +7,7 @@ import { useTimer } from '../contexts/TimerContext';
 import { useAuth } from '../contexts/AuthContext';
 import { saveExperimentData } from '../../lib/experimentService';
 import { TextPromptingExperimentResult } from '../../lib/types';
-import { ExperimentPageType } from '../../lib/experimentUtils';
+import { ExperimentPageType, getProductForExperiment } from '../../lib/experimentUtils';
 
 
 // =========== TextPromptingPage Component ===========
@@ -272,11 +272,15 @@ function TextPromptingPage() {
             // タイマーを停止
             stopTimer();
             
+            // 動的にproductを取得してidを使用
+            const product = getProductForExperiment(userId, ExperimentPageType.TextPrompting, isPractice);
+            const productId = product.id;
+            
             // 実験データを準備
             const experimentData: TextPromptingExperimentResult = {
                 userId: userId || 0, // 1-100の範囲のuserId
                 experimentType: 'text-prompting', // Change from 'think-aloud' to 'text-prompting'
-                productId: 'product1', // 現在はproduct1固定
+                productId: productId,
                 originalText,
                 finalText: textContent,
                 startTime: getStartTimeISO() || new Date().toISOString(),

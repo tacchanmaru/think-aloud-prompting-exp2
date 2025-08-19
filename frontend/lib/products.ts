@@ -34,35 +34,20 @@ export const product2: Product = {
   imagePreviewUrl: '/images/penguin.jpeg',
 };
 
-// export const product1: Product = {
-//   id: 'product1',
-//   name: 'バッグ', // 例
-//   text: `東京大学のロゴが印象的なシンプルなトートバッグ。A4サイズの書類やノートがすっきり入る大きさです。
+export const product3: Product = {
+  id: 'product3',
+  name: 'くま', 
+  text: `チェック柄バンダナが可愛い、くまのぬいぐるみキーホルダーです。やわらかな手触りで癒しアイテムとしてもおすすめです。
 
-// - デザイン: 東京大学ロゴ入り（プリントは紙をテープで固定）
-// - カラー: ナチュラル（生成り）
-// - 素材: キャンバス地
-// - サイズ: A4対応
-// - 持ち手: 肩掛け可能
+- キャラクター: くま
+- アイテム: ぬいぐるみキーホルダー
+- カラー: ブラウン（赤白チェック柄バンダナ付き）
+- 特徴: ボールチェーン付き、手のひらサイズ
 
-// ご覧いただきありがとうございます。`,
-//   imagePreviewUrl: '/images/bag.jpeg',
-// };
+ご覧いただきありがとうございます。`,
+  imagePreviewUrl: '/images/bear.jpeg',
+};
 
-// export const product2: Product = {
-//   id: 'product2',
-//   name: 'バッグ', // 例
-//   text: `東京大学のロゴが印象的なシンプルなトートバッグ。A4サイズの書類やノートがすっきり入る大きさです。
-
-// - デザイン: 東京大学ロゴ入り（プリントは紙をテープで固定）
-// - カラー: ナチュラル（生成り）
-// - 素材: キャンバス地
-// - サイズ: A4対応
-// - 持ち手: 肩掛け可能
-
-// ご覧いただきありがとうございます。`,
-//   imagePreviewUrl: '/images/bag.jpeg',
-// };
 
 // Practice mode data (shared between manual and think-aloud experiments)
 export const practiceData: Product = {
@@ -78,3 +63,18 @@ export const practiceData: Product = {
 ご覧いただきありがとうございます。`,
   imagePreviewUrl: '/images/pencil.jpeg',
 };
+
+// export const practiceData: Product = {
+//   id: 'practice',
+//   name: 'バッグ',
+//   text: `東京大学のロゴが印象的なシンプルなトートバッグ。A4サイズの書類やノートがすっきり入る大きさです。
+
+// - デザイン: 東京大学ロゴ入り（プリントは紙をテープで固定）
+// - カラー: ナチュラル（生成り）
+// - 素材: キャンバス地
+// - サイズ: A4対応
+// - 持ち手: 肩掛け可能
+
+// ご覧いただきありがとうございます。`,
+//   imagePreviewUrl: '/images/bag.jpeg',
+// };
