@@ -20,6 +20,27 @@ function ManualEditPage() {
     const { userId } = useAuth();
     
     const [mode, setMode] = useState<'upload' | 'edit'>('upload');
+
+    // 戻る操作を無効化するためのuseEffect
+    useEffect(() => {
+        const preventBack = () => {
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        const handlePopState = () => {
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        // 初期状態で履歴を追加
+        preventBack();
+
+        // popstateイベントリスナーを追加
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
     
     // Application state
     const [imagePreview, setImagePreview] = useState<string | null>(null);

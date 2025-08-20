@@ -180,21 +180,21 @@ function HomePage() {
                             <div className="section-title">練習用</div>
                             <button 
                                 className={`menu-button practice ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/manual-edit?practice=true")}
+                                onClick={() => userId && router.replace("/manual-edit?practice=true")}
                                 disabled={!userId}
                             >
                                 手動編集（練習用）
                             </button>
                             <button 
                                 className={`menu-button practice ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/text-prompting?practice=true")}
+                                onClick={() => userId && router.replace("/text-prompting?practice=true")}
                                 disabled={!userId}
                             >
                                 テキストAI（練習用）
                             </button>
                             <button 
                                 className={`menu-button practice ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/think-aloud?practice=true")}
+                                onClick={() => userId && router.replace("/think-aloud?practice=true")}
                                 disabled={!userId}
                             >
                                 思考発話AI（練習用）
@@ -207,21 +207,21 @@ function HomePage() {
                             <div className="section-title">実験</div>
                             <button 
                                 className={`menu-button ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/manual-edit")}
+                                onClick={() => userId && router.replace("/manual-edit")}
                                 disabled={!userId}
                             >
                                 手動編集
                             </button>
                             <button 
                                 className={`menu-button ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/text-prompting")}
+                                onClick={() => userId && router.replace("/text-prompting")}
                                 disabled={!userId}
                             >
                                 テキストAI
                             </button>
                             <button 
                                 className={`menu-button ${!userId ? 'disabled' : ''}`}
-                                onClick={() => userId && router.push("/think-aloud")}
+                                onClick={() => userId && router.replace("/think-aloud")}
                                 disabled={!userId}
                             >
                                 思考発話AI

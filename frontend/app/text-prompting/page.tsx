@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, Suspense } from 'react';
+import { useState, useRef, useCallback, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductImageUploadPhase from '../components/ProductImageUploadPhase';
 import ConfirmationDialog from '../components/ConfirmationDialog';
@@ -20,6 +20,27 @@ function TextPromptingPage() {
     const { userId } = useAuth();
     
     const [mode, setMode] = useState<'upload' | 'edit'>('upload');
+
+    // 戻る操作を無効化するためのuseEffect
+    useEffect(() => {
+        const preventBack = () => {
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        const handlePopState = () => {
+            window.history.pushState(null, '', window.location.href);
+        };
+
+        // 初期状態で履歴を追加
+        preventBack();
+
+        // popstateイベントリスナーを追加
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
     
     // Application state
     const [imagePreview, setImagePreview] = useState<string | null>(null);
