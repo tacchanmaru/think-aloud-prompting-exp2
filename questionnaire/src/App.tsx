@@ -16,7 +16,6 @@ import SUSQuestion from "./SUSQuestion";
 import NasaTLXQuestion from "./NasaTLXQuestion";
 import ProductDescriptionQuestion from "./ProductDescriptionQuestion";
 import { nasa_tlx_list, sus_list } from "./constraints";
-import FreeDescriptionQuestion from "./FreeDescriptionQuestion";
 import AdminConfirmation from "./AdminConfirmation";
 
 const Container = styled.div`
@@ -72,16 +71,12 @@ function App() {
       }
     } else if (taskPage === 2) { // 商品説明文
       if (!product_description_answer.satisfaction || !product_description_answer.guilt || 
-          !product_description_answer.ownership || !product_description_answer.honesty) {
+          !product_description_answer.ownership || !product_description_answer.honesty ||
+          !product_description_answer.ease || !product_description_answer.agency) {
         alert(`質問紙${taskNum}（商品説明文）に回答してください。`);
         return;
       }
-    } else if (taskPage === 3) { // 自由記述
-      if (!product_description_answer.freeText) {
-        alert(`質問紙${taskNum}（自由記述）に回答してください。`);
-        return;
-      }
-    } else if (taskPage === 4) { // 管理者確認画面の「次へ」
+    } else if (taskPage === 3) { // 管理者確認画面の「次へ」
       // 現在のタスクのデータをFirebaseに送信
       await sendTaskData(currentTask + 1);
     }
@@ -124,7 +119,8 @@ function App() {
       nasa_tlx_result.length !== nasa_tlx_list.length ||
       sus_result.length !== sus_list.length ||
       !product_description_answer.satisfaction || !product_description_answer.guilt || 
-      !product_description_answer.ownership || !product_description_answer.honesty
+      !product_description_answer.ownership || !product_description_answer.honesty ||
+      !product_description_answer.ease || !product_description_answer.agency
     ) {
       alert("回答が完了していません。");
       return;
@@ -236,39 +232,36 @@ function App() {
     );
   };
 
-  // 現在のタスク（0, 1, 2）と各タスク内のページ（0-4）を管理
-  const currentTask = Math.floor(page / 5); // 0, 1, 2 (タスク1, 2, 3)
-  const currentTaskPage = page % 5; // 0-4 (各タスク内のページ)
+  // 現在のタスク（0, 1, 2）と各タスク内のページ（0-3）を管理
+  const currentTask = Math.floor(page / 4); // 0, 1, 2 (タスク1, 2, 3)
+  const currentTaskPage = page % 4; // 0-3 (各タスク内のページ)
   
   const pages = [
-    // Task 1 (pages 0-4)
-    renderSUSQuestions(),          // 0: 質問紙①(1/4)
-    renderNasaTLXQuestions(),      // 1: 質問紙①(2/4)
-    <ProductDescriptionQuestion />, // 2: 質問紙①(3/4)
-    <FreeDescriptionQuestion />,   // 3: 質問紙①(4/4)
-    <AdminConfirmation taskNumber={1} />, // 4: 管理者確認画面
+    // Task 1 (pages 0-3)
+    renderSUSQuestions(),          // 0: 質問紙①(1/3)
+    renderNasaTLXQuestions(),      // 1: 質問紙①(2/3)
+    <ProductDescriptionQuestion />, // 2: 質問紙①(3/3)
+    <AdminConfirmation taskNumber={1} />, // 3: 管理者確認画面
     
-    // Task 2 (pages 5-9)
-    renderSUSQuestions(),          // 5: 質問紙②(1/4)
-    renderNasaTLXQuestions(),      // 6: 質問紙②(2/4)
-    <ProductDescriptionQuestion />, // 7: 質問紙②(3/4)
-    <FreeDescriptionQuestion />,   // 8: 質問紙②(4/4)
-    <AdminConfirmation taskNumber={2} />, // 9: 管理者確認画面
+    // Task 2 (pages 4-7)
+    renderSUSQuestions(),          // 4: 質問紙②(1/3)
+    renderNasaTLXQuestions(),      // 5: 質問紙②(2/3)
+    <ProductDescriptionQuestion />, // 6: 質問紙②(3/3)
+    <AdminConfirmation taskNumber={2} />, // 7: 管理者確認画面
     
-    // Task 3 (pages 10-13)
-    renderSUSQuestions(),          // 10: 質問紙③(1/4)
-    renderNasaTLXQuestions(),      // 11: 質問紙③(2/4)
-    <ProductDescriptionQuestion />, // 12: 質問紙③(3/4)
-    <FreeDescriptionQuestion />,   // 13: 質問紙③(4/4)
+    // Task 3 (pages 8-10)
+    renderSUSQuestions(),          // 8: 質問紙③(1/3)
+    renderNasaTLXQuestions(),      // 9: 質問紙③(2/3)
+    <ProductDescriptionQuestion />, // 10: 質問紙③(3/3)
   ];
 
   const getPageTitle = () => {
     const taskNum = currentTask + 1;
-    if (currentTaskPage === 4) {
+    if (currentTaskPage === 3) {
       return `質問紙${taskNum}（完了）`;
     }
-    if (currentTaskPage <= 3) {
-      return `質問紙${taskNum}（${currentTaskPage + 1}/4）`;
+    if (currentTaskPage <= 2) {
+      return `質問紙${taskNum}（${currentTaskPage + 1}/3）`;
     }
     return `質問紙${taskNum}`;
   };

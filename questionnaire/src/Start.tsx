@@ -42,7 +42,8 @@ const Start = () => {
       guilt: 0,
       ownership: 0,
       honesty: 0,
-      freeText: "",
+      ease: 0,
+      agency: 0,
     });
     
     // Clear localStorage

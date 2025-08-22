@@ -34,7 +34,8 @@ export interface ProductDescriptionState {
   guilt: number;
   ownership: number;
   honesty: number;
-  freeText: string;
+  ease: number;
+  agency: number;
 }
 
 
