@@ -17,20 +17,20 @@ const AnswerArea = styled.div`
 `;
 
 interface LocalAnswer {
-  satisfaction: number;
-  guilt: number;
-  ownership: number;
-  honesty: number;
-  agency: number;
+  satisfaction: number | null;
+  guilt: number | null;
+  ownership: number | null;
+  honesty: number | null;
+  agency: number | null;
 }
 
 const ProductDescriptionQuestion = () => {
   const [localAnswer, setLocalAnswer] = useState<LocalAnswer>({
-    satisfaction: 0,
-    guilt: 0,
-    ownership: 0,
-    honesty: 0,
-    agency: 0
+    satisfaction: null,
+    guilt: null,
+    ownership: null,
+    honesty: null,
+    agency: null
   });
 
   const [formAnswer, setFormAnswer] = useRecoilState(productDescriptionAnswerState);
@@ -38,11 +38,11 @@ const ProductDescriptionQuestion = () => {
   useEffect(() => {
     if (formAnswer) {
       setLocalAnswer({
-        satisfaction: formAnswer.satisfaction || 0,
-        guilt: formAnswer.guilt || 0,
-        ownership: formAnswer.ownership || 0,
-        honesty: formAnswer.honesty || 0,
-        agency: formAnswer.agency || 0
+        satisfaction: formAnswer.satisfaction || null,
+        guilt: formAnswer.guilt || null,
+        ownership: formAnswer.ownership || null,
+        honesty: formAnswer.honesty || null,
+        agency: formAnswer.agency || null
       });
     }
   }, []);

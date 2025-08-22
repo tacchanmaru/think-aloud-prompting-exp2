@@ -5,7 +5,7 @@ import {
   userInfoAnswerState,
   productDescriptionAnswerState,
 } from "./store/answerState";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Button, Divider, Paper, Typography } from "@mui/material";
 import styled from "@emotion/styled";
 import { sub_color } from "./color";
@@ -33,6 +33,10 @@ function App() {
   const nasa_tlx_result = useRecoilValue(nasaTLXAnswerState);
   const sus_result = useRecoilValue(susAnswerState);
   const product_description_answer = useRecoilValue(productDescriptionAnswerState);
+  
+  const setNasaTLX = useSetRecoilState(nasaTLXAnswerState);
+  const setSUS = useSetRecoilState(susAnswerState);
+  const setProductDescription = useSetRecoilState(productDescriptionAnswerState);
 
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -79,6 +83,19 @@ function App() {
     } else if (taskPage === 3) { // 管理者確認画面の「次へ」
       // 現在のタスクのデータをFirebaseに送信
       await sendTaskData(currentTask + 1);
+      
+      // 次のタスクのためにステートをリセット（Task 3でない場合のみ）
+      if (currentTask < 2) {
+        setNasaTLX([]);
+        setSUS([]);
+        setProductDescription({
+          satisfaction: null,
+          guilt: null,
+          ownership: null,
+          honesty: null,
+          agency: null,
+        });
+      }
     }
     
     setPage((page) => page + 1);

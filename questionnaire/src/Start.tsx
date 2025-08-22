@@ -38,11 +38,11 @@ const Start = () => {
     setNasaTLX([]);
     setSUS([]);
     setProductDescription({
-      satisfaction: 0,
-      guilt: 0,
-      ownership: 0,
-      honesty: 0,
-      agency: 0,
+      satisfaction: null,
+      guilt: null,
+      ownership: null,
+      honesty: null,
+      agency: null,
     });
     
     // Clear localStorage
