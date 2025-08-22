@@ -42,7 +42,6 @@ const Start = () => {
       guilt: 0,
       ownership: 0,
       honesty: 0,
-      ease: 0,
       agency: 0,
     });
     

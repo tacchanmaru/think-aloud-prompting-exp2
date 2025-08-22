@@ -72,7 +72,7 @@ function App() {
     } else if (taskPage === 2) { // 商品説明文
       if (!product_description_answer.satisfaction || !product_description_answer.guilt || 
           !product_description_answer.ownership || !product_description_answer.honesty ||
-          !product_description_answer.ease || !product_description_answer.agency) {
+          !product_description_answer.agency) {
         alert(`質問紙${taskNum}（商品説明文）に回答してください。`);
         return;
       }
@@ -120,7 +120,7 @@ function App() {
       sus_result.length !== sus_list.length ||
       !product_description_answer.satisfaction || !product_description_answer.guilt || 
       !product_description_answer.ownership || !product_description_answer.honesty ||
-      !product_description_answer.ease || !product_description_answer.agency
+      !product_description_answer.agency
     ) {
       alert("回答が完了していません。");
       return;
@@ -249,16 +249,20 @@ function App() {
     <ProductDescriptionQuestion />, // 6: 質問紙②(3/3)
     <AdminConfirmation taskNumber={2} />, // 7: 管理者確認画面
     
-    // Task 3 (pages 8-10)
+    // Task 3 (pages 8-11)
     renderSUSQuestions(),          // 8: 質問紙③(1/3)
     renderNasaTLXQuestions(),      // 9: 質問紙③(2/3)
     <ProductDescriptionQuestion />, // 10: 質問紙③(3/3)
+    <AdminConfirmation taskNumber={3} />, // 11: 管理者確認画面
   ];
 
   const getPageTitle = () => {
     const taskNum = currentTask + 1;
-    if (currentTaskPage === 3) {
+    if (currentTaskPage === 3 && currentTask < 2) {
       return `質問紙${taskNum}（完了）`;
+    }
+    if (currentTaskPage === 3 && currentTask === 2) {
+      return `質問紙${taskNum}（送信）`;
     }
     if (currentTaskPage <= 2) {
       return `質問紙${taskNum}（${currentTaskPage + 1}/3）`;
@@ -287,7 +291,7 @@ function App() {
 
       <Divider />
       <div style={{ margin: "20px auto", maxWidth: "800px", display: "flex" }}>
-        {page > 0 && (
+        {page > 0 && page !== 4 && page !== 8 && (
           <Paper
             style={{ margin: "10px", padding: "10px", width: "50%" }}
             onClick={toBeforePage}
