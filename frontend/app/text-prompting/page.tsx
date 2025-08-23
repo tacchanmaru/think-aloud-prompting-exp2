@@ -67,6 +67,48 @@ function TextPromptingPage() {
     
     const descriptionDisplayRef = useRef<HTMLDivElement | null>(null);
 
+    const updateHistorySummary = useCallback(async (history: typeof modificationHistory) => {
+        // history summaryの更新は編集履歴が2つ以上の場合のみ実行
+        if (history.length < 2) {
+            return;
+        }
+
+        try {
+            console.log('Updating history summary for', history.length, 'modifications');
+            
+            const response = await fetch('/api/history-summary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    history: history.map(item => ({
+                        utterance: item.utterance,
+                        editPlan: item.editPlan,
+                        originalText: item.originalText,
+                        modifiedText: item.modifiedText,
+                    })),
+                    currentSummary: historySummary
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`History summary API error: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.historySummary) {
+                setHistorySummary(result.historySummary);
+                console.log('History summary updated:', result.historySummary);
+            }
+            
+        } catch (error) {
+            console.error('Error updating history summary:', error);
+            // History summary更新の失敗は致命的エラーではないため、メイン処理は継続
+        }
+    }, [historySummary]);
+
     const processTextModification = useCallback(async (utterance: string) => {
         try {
             console.log('Processing text modification for utterance:', utterance);
@@ -129,49 +171,7 @@ function TextPromptingPage() {
             console.error('Error in text modification:', error);
             throw error; // Re-throw to be handled by caller
         }
-    }, [textContent, imagePreview, modificationHistory, historySummary]);
-
-    const updateHistorySummary = useCallback(async (history: typeof modificationHistory) => {
-        // history summaryの更新は編集履歴が2つ以上の場合のみ実行
-        if (history.length < 2) {
-            return;
-        }
-
-        try {
-            console.log('Updating history summary for', history.length, 'modifications');
-            
-            const response = await fetch('/api/history-summary', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    history: history.map(item => ({
-                        utterance: item.utterance,
-                        editPlan: item.editPlan,
-                        originalText: item.originalText,
-                        modifiedText: item.modifiedText,
-                    })),
-                    currentSummary: historySummary
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`History summary API error: ${response.status}`);
-            }
-
-            const result = await response.json();
-            
-            if (result.historySummary) {
-                setHistorySummary(result.historySummary);
-                console.log('History summary updated:', result.historySummary);
-            }
-            
-        } catch (error) {
-            console.error('Error updating history summary:', error);
-            // History summary更新の失敗は致命的エラーではないため、メイン処理は継続
-        }
-    }, []);
+    }, [textContent, imagePreview, modificationHistory, historySummary, updateHistorySummary]);
 
     // 前のテキストを取得する関数
     const getPreviousText = () => {

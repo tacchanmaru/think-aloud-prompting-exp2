@@ -16,7 +16,7 @@ function ManualEditPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const isPractice = searchParams.get('practice') === 'true';
-    const { stopTimer, getStartTimeISO, getEndTimeISO, getDurationSeconds } = useTimer();
+    const { startTimer, stopTimer, getStartTimeISO, getEndTimeISO, getDurationSeconds } = useTimer();
     const { userId } = useAuth();
     
     const [mode, setMode] = useState<'upload' | 'edit'>('upload');
@@ -70,6 +70,7 @@ function ManualEditPage() {
         setImagePreview(imagePreview);
         setTextContent(generatedText);
         setOriginalText(generatedText); // 元のテキストとして保存
+        startTimer();
         setMode('edit');
     };
 

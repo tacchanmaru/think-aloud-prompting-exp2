@@ -23,7 +23,6 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
     const [showStartButton, setShowStartButton] = useState(false);
     const [isConnectingMicrophone, setIsConnectingMicrophone] = useState(false);
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const cameraInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,13 +129,6 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
                     type="file"
                     accept="image/*"
                     capture="environment"
-                    onChange={handleImageUpload}
-                    style={{ display: 'none' }}
-                />
-                <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
                     onChange={handleImageUpload}
                     style={{ display: 'none' }}
                 />
