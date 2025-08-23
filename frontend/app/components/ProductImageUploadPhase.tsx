@@ -12,7 +12,7 @@ interface ProductImageUploadPhaseProps {
     onMicrophoneConnecting?: (isConnecting: boolean) => void;
 }
 
-const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onComplete, isPractice = false, pageType, onMicrophoneConnecting }) => {
+const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onComplete, isPractice = false, pageType }) => {
     const { userId } = useAuth();
     const currentProduct = getProductForExperiment(userId, pageType, isPractice);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -84,7 +84,7 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
             // Store the generated text and show the start button
             setGeneratedText(randomText);
             setShowStartButton(true);
-        } catch (err) {
+        } catch {
             setError('テキスト生成に失敗しました。');
         } finally {
             setIsGenerating(false);
