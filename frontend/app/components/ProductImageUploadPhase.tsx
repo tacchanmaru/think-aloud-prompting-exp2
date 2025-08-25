@@ -43,29 +43,29 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
         cameraInputRef.current?.click();
     };
 
-    const handleUseDefaultImage = () => {
-        // Use current product's image
-        const defaultImageUrl = currentProduct.imagePreviewUrl;
-        const fileName = currentProduct.imagePreviewUrl?.split('/').pop() || 'default.jpeg';
+    // const handleUseDefaultImage = () => {
+    //     // Use current product's image
+    //     const defaultImageUrl = currentProduct.imagePreviewUrl;
+    //     const fileName = currentProduct.imagePreviewUrl?.split('/').pop() || 'default.jpeg';
         
-        // Create a sample file object for consistency
-        if (!defaultImageUrl) {
-            setError('デフォルト画像が見つかりません。');
-            return;
-        }
+    //     // Create a sample file object for consistency
+    //     if (!defaultImageUrl) {
+    //         setError('デフォルト画像が見つかりません。');
+    //         return;
+    //     }
         
-        fetch(defaultImageUrl)
-            .then(res => res.blob())
-            .then(blob => {
-                const file = new File([blob], fileName, { type: 'image/jpeg' });
-                setImageFile(file);
-                setImagePreview(defaultImageUrl);
-            })
-            .catch(err => {
-                console.error('Failed to load default image:', err);
-                setError('デフォルト画像の読み込みに失敗しました。');
-            });
-    };
+    //     fetch(defaultImageUrl)
+    //         .then(res => res.blob())
+    //         .then(blob => {
+    //             const file = new File([blob], fileName, { type: 'image/jpeg' });
+    //             setImageFile(file);
+    //             setImagePreview(defaultImageUrl);
+    //         })
+    //         .catch(err => {
+    //             console.error('Failed to load default image:', err);
+    //             setError('デフォルト画像の読み込みに失敗しました。');
+    //         });
+    // };
 
     const generateDescriptionFromImage = async () => {
         if (!imageFile || !imagePreview) return;
@@ -134,7 +134,7 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
                 />
                 
                 {/* Developer-only default image button */}
-                {!generatedText && !imageFile && (
+                {/* {!generatedText && !imageFile && (
                     <div className="dev-controls">
                         <button 
                             className="dev-default-button"
@@ -144,7 +144,7 @@ const ProductImageUploadPhase: React.FC<ProductImageUploadPhaseProps> = ({ onCom
                             🔧 デフォルト画像
                         </button>
                     </div>
-                )}
+                )} */}
                 
                 {imageFile && !generatedText && (
                     <button 
