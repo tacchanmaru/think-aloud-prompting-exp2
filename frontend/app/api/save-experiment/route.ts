@@ -48,14 +48,16 @@ export async function POST(request: NextRequest) {
         const db = getFirestore();
         
         // コレクションパスの決定（新構造）
-        const collectionPath = experimentData.isPracticeMode ? 'practice' : 'task';
-        const timestamp = Date.now().toString();
-        const experimentType = experimentData.experimentType === 'manual' 
+        const methodName = experimentData.experimentType === 'manual' 
             ? 'manual_edit' 
             : experimentData.experimentType === 'text-prompting'
             ? 'text_prompting'
             : 'think_aloud';
-        const docRef = db.doc(`${collectionPath}/${timestamp}_${experimentType}`);
+        const sessionTimestamp = new Date().toISOString(); // ISO format: 2025-08-16T05:42:58.173Z
+        const modeType = experimentData.isPracticeMode ? 'practice' : 'task';
+        
+        // Firestore path: edit/{mode}/{method_name}/{timestamp}
+        const docRef = db.collection('edit').doc(modeType).collection(methodName).doc(sessionTimestamp);
         
         // 実験タイプに応じたフィールド名の決定
         const fieldName = experimentData.experimentType === 'manual' 
